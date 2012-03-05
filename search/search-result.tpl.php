@@ -44,15 +44,23 @@
  *
  * @see template_preprocess_search_result()
  */
-?>
-<dt class="title">
-  <a href="<?php print $url; ?>"><?php print $title; ?></a>
-</dt>
-<dd>
-  <?php if ($snippet) : ?>
-    <p class="search-snippet"><?php print $snippet; ?></p>
-  <?php endif; ?>
-  <?php if ($info) : ?>
-  <p class="search-info"><?php print $info; ?></p>
-  <?php endif; ?>
-</dd>
+
+/* Modification by Daniel and Steve
+ */
+
+ if (!$info) : //user
+ ?>
+  <div id="search-result-user" style="clear:both;">
+  <a href="<?php print $url; ?>"><img src="<?php print $picture ?>" /><br/><?php print $title; ?></a>
+  <!-- by steve: Original: <a href="<?php /*print $url; ?>"><?php print $title; */ ?></a>-->
+  </div>
+ <?php endif; ?>
+
+  <?php if ($snippet) : //nodes
+	    ?>
+	      <div id="search-result-node"  style="clear:both;">
+	          <a href="<?php print $url; ?>"><br/><?php print $title; ?></a>
+		      <p class="search-snippet"><?php print $snippet; ?></p>
+		        </div>
+			  <?php endif; ?>  
+

@@ -82,6 +82,16 @@ function template_preprocess_search_result(&$variables) {
   $variables['title'] = check_plain($result['title']);
 
   $info = array();
+  // Modification by Steve
+  $picture = $result['node'] ? $result['node']->picture : $result['picture'];
+  if (!empty($picture)) {
+    $variables['picture'] = $base_url."/".check_plain($picture);
+  }else{
+      $variables['picture'] = $base_url."/sites/default/files/pictures/blind_passbild.gif";
+  }
+  //Wenn user, dann nichts �bergeben, bei node =>'node'
+  $variables['node'] = $result['user']? "node":"";
+  // Modification by Steve END
   if (!empty($result['type'])) {
     $info['type'] = check_plain($result['type']);
   }

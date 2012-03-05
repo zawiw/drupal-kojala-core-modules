@@ -1062,7 +1062,8 @@ function search_form(&$form_state, $action = '', $keys = '', $type = NULL, $prom
  */
 function search_box(&$form_state, $form_id) {
   $form[$form_id] = array(
-    '#title' => t('Search this site'),
+    // Modification by Daniel.
+    '#title' => t(''),
     '#type' => 'textfield',
     '#size' => 15,
     '#default_value' => '',
@@ -1149,21 +1150,38 @@ function template_preprocess_search_block_form(&$variables) {
 
 /**
  * Perform a standard search on the given keys, and return the formatted results.
+ * Modification by Daniel.
  */
 function search_data($keys = NULL, $type = 'node') {
-
-  if (isset($keys)) {
-    if (module_hook($type, 'search')) {
-      $results = module_invoke($type, 'search', 'search', $keys);
+  if (isset($keys)) {    
+    if (module_hook("user", 'search') && module_hook("node", 'search')) {
+      if(user_access('access user profiles')) {
+          $results_user = module_invoke("user", 'search', 'search', $keys);
+          $results_node = module_invoke("node", 'search', 'search', $keys);
+          $results = array_merge($results_user,  $results_node);
+      }    
+      else 
+      {    
+        $results_node = module_invoke("node", 'search', 'search', $keys);
+        $results = $results_node;
+      }    
+    
       if (isset($results) && is_array($results) && count($results)) {
         if (module_hook($type, 'search_page')) {
           return module_invoke($type, 'search_page', $results);
-        }
-        else {
-          return theme('search_results', $results, $type);
-        }
-      }
-    }
+        }    
+        else {  
+          $ret = " "; 
+          if($results_user)
+            $ret .= $results_node ? theme('search_results', $results_user, "user") : theme('search_results', $results_user, "user-only");
+
+          if($results_node)
+            $ret .= $results_user ? theme('search_results', $results_node, "node") : theme('search_results', $results_node, "node-only") ;
+
+          return $ret;
+        }    
+      }    
+    }    
   }
 }
 

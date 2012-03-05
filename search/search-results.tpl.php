@@ -19,8 +19,22 @@
  *
  * @see template_preprocess_search_results()
  */
+
+/* Modifications by Daniel and Steve
+ */
+
 ?>
-<dl class="search-results <?php print $type; ?>-results">
-  <?php print $search_results; ?>
-</dl>
+	<div id="search-<?php print $type; ?>-results">
+  
+   <?php
+	if($type == "node")
+	  print '<h3 class="title">Inhalte</h3>';
+	elseif($type == "user" )
+	  print '<h3 class="title">Köpfe </h3>';
+
+      print $search_results; 
+   
+    ?>
+	</div>
 <?php print $pager; ?>
+
