@@ -598,11 +598,14 @@ function user_search($op = 'search', $keys = NULL, $skip_access_check = FALSE) {
         $find = array();
         // Replace wildcards with MySQL/PostgreSQL wildcards.
         $keys = preg_replace('!\*+!', '%', $keys);
-        if (user_access('administer users')) {
+	// by Daniel; original line: if (user_access('administer users')) {
+	if (user_access('administer users') || user_access('access user profiles')) {
           // Administrators can also search in the otherwise private email field.
-          $result = pager_query("SELECT name, uid, mail FROM {users} WHERE LOWER(name) LIKE LOWER('%%%s%%') OR LOWER(mail) LIKE LOWER('%%%s%%')", 15, 0, NULL, $keys, $keys);
-          while ($account = db_fetch_object($result)) {
-            $find[] = array('title' => $account->name .' ('. $account->mail .')', 'link' => url('user/'. $account->uid, array('absolute' => TRUE)));
+	  // by Daniel; original line: $result = pager_query("SELECT name, uid, mail FROM {users} WHERE LOWER(name) LIKE LOWER('%%%s%%') OR LOWER(mail) LIKE LOWER('%%%s%%')", 15, 0, NULL, $keys, $keys);
+	  $result = pager_query("SELECT name, uid, mail, picture FROM {users} WHERE LOWER(name) LIKE LOWER('%%%s%%') OR LOWER(mail) LIKE LOWER('%%%s%%')", 15, 0, NULL, $keys, $keys);
+	  while ($account = db_fetch_object($result)) {
+	  //by Steve , Daniel; original line: $find[] = array('title' => $account->name .' ('. $account->mail .')', 'link' => url('user/'. $account->uid, array('absolute' => TRUE)));
+          $find[] = array('title' => $account->name, 'link' => url('user/'. $account->uid, array('absolute' => TRUE)), 'picture' => $account->picture);
           }
         }
         else {
